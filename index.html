@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>🚄 SmartRail Positioning System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-gradient: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow-lg: 0 25px 45px rgba(0,0,0,0.1);
+            --shadow-xl: 0 35px 60px rgba(0,0,0,0.15);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255,255,255,0.8);
+            --accent: #00d4ff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #667eea);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+
+        header {
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-glow {
+            text-shadow: 0 0 20px rgba(0, 214, 255, 0.5);
+            background: linear-gradient(45deg, transparent, rgba(0,214,255,0.1), transparent);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            display: inline-block;
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+        }
+
+        h1 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #00d4ff, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes textGlow {
+            from { filter: drop-shadow(0 0 10px rgba(0,212,255,0.5)); }
+            to { filter: drop-shadow(0 0 20px rgba(0,212,255,0.8)); }
+        }
+
+        .subtitle {
+            margin: 0.5rem 0 0;
+            font-weight: 400;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-12px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card h2 {
+            margin: 0 0 1.5rem;
+            font-weight: 600;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid transparent;
+            border-radius: 16px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(0,212,255,0.1);
+            background: rgba(255,255,255,0.08);
+            transform: scale(1.02);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 1.2rem;
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.5);
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        .output {
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Train Animation Section */
+        .train-section {
+            background: rgba(0,0,0,0.25);
+            padding: 1.8rem;
+            border-radius: 24px;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
+            height: 200px;
+        }
+
+        .train-track {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #333, #555, #333);
+            border-radius: 4px;
+        }
+
+        .train-track::before,
+        .train-track::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            width: 20px;
+            height: 16px;
+            background: #444;
+            border-radius: 2px;
+        }
+
+        .train-track::before { left: 10%; }
+        .train-track::after { right: 10%; }
+
+        .train-container {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            transition: all 3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .train {
+            width: 80px;
+            height: 50px;
+            position: relative;
+            filter: drop-shadow(0 8px 20px rgba(0,0,0,0.5));
+        }
+
+        .train.moving {
+            animation: trainMove 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        .train.stationary {
+            animation: trainIdle 2s ease-in-out infinite;
+        }
+
+        @keyframes trainMove {
+            0% { transform: translateX(-100px) rotate(0deg); }
+            50% { transform: translateX(30%) rotate(2deg); }
+            100% { transform: translateX(calc(100vw - 200px)) rotate(0deg); }
+        }
+
+        @keyframes trainIdle {
+            0%, 100% { transform: translateX(0) rotate(-1deg); }
+            50% { transform: translateX(5px) rotate(1deg); }
+        }
+
+        .train-engine {
+            width: 50px;
+            height: 40px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            border-radius: 8px 12px 12px 8px;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .train-engine::before {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 10px;
+            width: 16px;
+            height: 20px;
+            background: #333;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .train-car {
+            width: 30px;
+            height: 35px;
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            border-radius: 6px;
+            position: absolute;
+            right: -25px;
+            top: 5px;
+        }
+
+        .train-car::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 12px;
+            width: 16px;
+            height: 12px;
+            background: #333;
+            border-radius: 2px 8px 8px 2px;
+        }
+
+        .train-smoke {
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            width: 12px;
+            height: 12px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 50%;
+            animation: smoke 2s infinite;
+        }
+
+        .train-smoke:nth-child(2) { animation-delay: 0.3s; left: 20px; }
+        .train-smoke:nth-child(3) { animation-delay: 0.6s; left: 25px; }
+
+        @keyframes smoke {
+            0% { transform: scale(0) translateY(0); opacity: 1; }
+            100% { transform: scale(2) translateY(-30px); opacity: 0; }
+        }
+
+        .train-status {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: rgba(0,0,0,0.7);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .result-section {
+            background: rgba(0,0,0,0.2);
+            padding: 1.5rem;
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+            animation: slideInUp 0.6s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes slideInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-section h3 {
+            margin: 0 0 1rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .result-value {
+            font-weight: 600;
+            color: #00e6a8;
+        }
+
+        .confidence-bar {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .confidence-fill {
+            height: 8px;
+            background: var(--success-gradient);
+            border-radius: 12px;
+            transition: width 1.5s ease;
+        }
+
+        .track-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+            display: inline-block;
+        }
+
+        .track-moving { background: var(--primary-gradient); }
+        .track-stationary { background: var(--warning-gradient); }
+
+        .loading {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            position: relative;
+            z-index: 10;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+                gap: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 2rem 1.5rem;
+            }
+            
+            .train-section {
+                height: 160px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="particles" id="particles"></div>
+
+    <header>
+        <div class="header-glow">
+            <h1>🚄 SmartRail Positioning System</h1>
+            <p class="subtitle">Real-time ML Prediction Dashboard</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- INPUT CARD -->
+        <div class="card">
+            <h2><i class="fas fa-download"></i> Input GPS Data</h2>
+            
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <i class="fas fa-map-marker-alt input-icon"></i>
+                    <input id="prev_lat" placeholder="Previous Latitude (e.g., 17.3850)" type="number" step="any">
+                </div>
+                
+                <div class="input-wrapper">
+                    <i class="fas fa-map-marker-alt input-icon"></i>
+                    <input id="prev_lon" placeholder="Previous Longitude (e.g., 78.4867)" type="number" step="any">
+                </div>
+                
+                <div class="input-wrapper">
+                    <i class="fas fa-location-dot input-icon"></i>
+                    <input id="curr_lat" placeholder="Current Latitude (e.g., 17.3851)" type="number" step="any">
+                </div>
+                
+                <div class="input-wrapper">
+                    <i class="fas fa-location-dot input-icon"></i>
+                    <input id="curr_lon" placeholder="Current Longitude (e.g., 78.4868)" type="number" step="any">
+                </div>
+                
+                <div class="input-wrapper">
+                    <i class="fas fa-mountain input-icon"></i>
+                    <input id="alt" placeholder="Altitude (meters)" type="number">
+                </div>
+                
+                <div class="input-wrapper">
+                    <i class="fas fa-clock input-icon"></i>
+                    <input id="time_step" placeholder="Time Step (sec)" value="1" type="number" min="0.1" step="0.1">
+                </div>
+            </div>
+
+            <button id="predictBtn" onclick="predict()">
+                <i class="fas fa-rocket"></i> Predict Next Position
+            </button>
+        </div>
+
+        <!-- OUTPUT CARD -->
+        <div class="card">
+            <h2><i class="fas fa-chart-line"></i> Prediction Results</h2>
+            <div class="output" id="output">
+                <div style="text-align: center; padding: 3rem; opacity: 0.6;">
+                    <i class="fas fa-bolt" style="font-size: 3rem; margin-bottom: 1rem; color: var(--accent);"></i>
+                    <p>Enter GPS data and click Predict to see real-time analysis with train animation</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div>Built with Flask + ML Model 🚀 | Enhanced with Train Animation</div>
+    </footer>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.width = particle.style.height = (Math.random() * 4 + 1) + 'px';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Enhanced predict function with train animation
+        async function predict() {
+            const btn = document.getElementById('predictBtn');
+            const output = document.getElementById('output');
+            
+            // Show loading state
+            btn.innerHTML = '<div class="loading"><div class="spinner"></div> Predicting...</div>';
+            btn.disabled = true;
+            output.innerHTML = `
+                <div style="text-align:center;padding:2rem">
+                    <div class="spinner" style="width:40px;height:40px;margin:0 auto 1rem"></div>
+                    <p>🚂 Analyzing train trajectory and preparing animation...</p>
+                </div>
+            `;
+
+            try {
+                const data = {
+                    prev_lat: parseFloat(document.getElementById("prev_lat").value),
+                    prev_lon: parseFloat(document.getElementById("prev_lon").value),
+                    curr_lat: parseFloat(document.getElementById("curr_lat").value),
+                    curr_lon: parseFloat(document.getElementById("curr_lon").value),
+                    alt: parseFloat(document.getElementById("alt").value),
+                    time_step: parseFloat(document.getElementById("time_step").value)
+                };
+
+                const res = await fetch("http://127.0.0.1:5000/predict", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(data)
+                });
+
+                const result = await res.json();
+
+                if (result.success) {
+                    const isMoving = result.track_category.toLowerCase().includes('moving') || parseFloat(result.speed) > 0.1;
+                    const trackClass = isMoving ? 'moving' : 'stationary';
+                    
+                    output.innerHTML = `
+                        <!-- Train Animation Section -->
+                        <div class="train-section">
+                            <div class="train-status">
+                                <i class="fas ${isMoving ? 'fa-train' : 'fa-train'}"></i> 
+                                ${result.track_category} (${(result.speed || 0).toFixed(2)} m/s)
+                            </div>
+                            <div class="train-track"></div>
+                            <div class="train-container">
+                                <div class="train ${trackClass}">
+                                    <div class="train-engine">
+                                        <div class="train-smoke"></div>
+                                        <div class="train-smoke"></div>
+                                        <div class="train-smoke"></div>
+                                    </div>
+                                    <div class="train-car"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="result-section">
+                            <h3><i class="fas fa-map-pin"></i> 📍 Position Coordinates</h3>
+                            <div class="result-item"><span>Previous Position:</span><span class="result-value">${result.previous_position}</span></div>
+                            <div class="result-item"><span>Current Position:</span><span class="result-value">${result.current_position}</span></div>
+                            <div class="result-item"><span style="color:#00e6a8">Predicted Next:</span><span class="result-value">${result.predicted_position}</span></div>
+                        </div>
+
+                        <div class="result-section">
+                            <h3><i class="fas fa-tachometer-alt"></i> ⚡ Motion Analysis</h3>
+                            <div class="result-item"><span>📏 Traveled Distance:</span><span class="result-value">${result.distance} m</span></div>
+                            <div class="result-item"><span>🚶 Observed Speed:</span><span class="result-value">${result.observed_speed} m/s</span></div>
+                            <div class="result-item"><span>🚀 Predicted Speed:</span><span class="result-value">${result.speed} m/s</span></div>
+                            <div class="result-item"><span>📦 Next Distance:</span><span class="result-value">${result.pred_distance} m</span></div>
+                        </div>
+
+                        <div class="result-section">
+                            <h3><i class="fas fa-compass"></i> 🧭 Navigation Data</h3>
+                            <div class="result-item"><span>🧭 Bearing:</span><span class="result-value">${result.bearing_deg}°</span></div>
+                            <div class="result-item">
+                                <span>🎯 Track Status:</span>
+                                <span class="track-badge track-${trackClass}">${result.track_category}</span>
+                            </div>
+                        </div>
+
+                        <div class="result-section">
+                            <h3><i class="fas fa-brain"></i> 🤖 Model Performance</h3>
+                            <div style="margin-bottom:1rem">
+                                <span>🎯 Confidence: </span>
+                                <div class="confidence-bar">
+                                    <div class="confidence-fill" style="width:${result.confidence * 100}%"></div>
+                                </div>
+                                <span style="font-size:0.9rem;opacity:0.8">${(result.confidence * 100).toFixed(1)}%</span>
+                            </div>
+                            <div class="result-item"><span>⚙️ Model Type:</span><span class="result-value">${result.model_type}</span></div>
+                        </div>
+                    `;
+
+                    // Trigger train animation after render
+                    setTimeout(() => {
+                        const train = document.querySelector('.train');
+                        train.classList.add('animated');
+                        
+                        // Reset animation for replay
+                        train.addEventListener('animationend', () => {
+                            setTimeout(() => {
+                                train.style.animation = 'none';
+                                train.offsetHeight; // Trigger reflow
+                                train.className = `train ${trackClass}`;
+                            }, 500);
+                        });
+                    }, 200);
+
+                } else {
+                    output.innerHTML = `
+                        <div style="text-align:center;padding:3rem;background:rgba(255,107,107,0.1);border-radius:20px;border:1px solid rgba(255,107,107,0.3)">
+                            <i class="fas fa-exclamation-triangle" style="font-size:4rem;color:#ff6b6b;margin-bottom:1rem"></i>
+                            <h3 style="color:#ff6b6b;margin:0 0 1rem">Prediction Error</h3>
+                            <p>${result.error || 'Unknown error occurred'}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                output.innerHTML = `
+                    <div style="text-align:center;padding:3rem;background:rgba(255,107,107,0.1);border-radius:20px;border:1px solid rgba(255,107,107,0.3)">
+                        <i class="fas fa-network-wired" style="font-size:4rem;color:#ff6b6b;margin-bottom:1rem"></i>
+                        <h3 style="color:#ff6b6b;margin:0 0 1rem">Connection Error</h3>
+                        <p>Unable to connect to prediction server. Please check if Flask server is running on port 5000.</p>
+                    </div>
+                `;
+            } finally {
+                btn.innerHTML = '<i class="fas fa-rocket"></i> Predict Next Position';
+                btn.disabled = false;
+            }
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            createParticles();
+            
+            document.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    predict();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
